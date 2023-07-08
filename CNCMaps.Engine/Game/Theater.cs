@@ -37,6 +37,9 @@ namespace CNCMaps.Engine.Game {
 			_art = art;
 
 			_rules.LoadAresIncludes(vfs);
+			_rules.LoadPhobosIncludes(vfs);
+			_art.LoadAresIncludes(vfs);
+			_art.LoadPhobosIncludes(vfs);
 		}
 
 		public Theater(TheaterType theaterType, EngineType engine, VirtualFileSystem vfs) {
@@ -59,6 +62,9 @@ namespace CNCMaps.Engine.Game {
 			}
 
 			_rules.LoadAresIncludes(_vfs);
+			_rules.LoadPhobosIncludes(_vfs);
+			_art.LoadAresIncludes(_vfs);
+			_art.LoadPhobosIncludes(_vfs);
 		}
 
 		public bool Initialize() {

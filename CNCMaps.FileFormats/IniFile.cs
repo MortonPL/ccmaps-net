@@ -66,6 +66,16 @@ namespace CNCMaps.FileFormats {
 			}
 		}
 
+		public void LoadPhobosIncludes(VirtualFileSystem.VirtualFileSystem vfs) {
+			// support for Ares tag
+			var includes = GetOrCreateSection("$Include");
+			foreach (var entry in includes.OrderedEntries) {
+				var include = vfs.Open<IniFile>(entry.Value);
+				include.LoadPhobosIncludes(vfs); // mechanism even works recursively!
+				MergeWith(include);
+			}
+		}
+
 		int ProcessLine(string line) {
 			IniSection.FixLine(ref line);
 			if (line.Length == 0) return 0;
