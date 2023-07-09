@@ -38,8 +38,10 @@ namespace CNCMaps.Engine.Game {
 
 			_rules.LoadAresIncludes(vfs);
 			_rules.LoadPhobosIncludes(vfs);
+			_rules.SolvePhobosInheritance();
 			_art.LoadAresIncludes(vfs);
 			_art.LoadPhobosIncludes(vfs);
+			_art.SolvePhobosInheritance();
 		}
 
 		public Theater(TheaterType theaterType, EngineType engine, VirtualFileSystem vfs) {
@@ -63,8 +65,10 @@ namespace CNCMaps.Engine.Game {
 
 			_rules.LoadAresIncludes(_vfs);
 			_rules.LoadPhobosIncludes(_vfs);
+			_rules.SolvePhobosInheritance();
 			_art.LoadAresIncludes(_vfs);
 			_art.LoadPhobosIncludes(_vfs);
+			_art.SolvePhobosInheritance();
 		}
 
 		public bool Initialize() {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -56,6 +57,37 @@ namespace CNCMaps.FileFormats {
 			}
 		}
 
+		public void SolvePhobosInheritance() {
+			foreach (var section in Sections)
+				Inherit(section);
+		}
+
+		private void Inherit(IniSection section) {
+			if (section.AlreadyInherited)
+				return;
+
+			if (!section.HasKey("$Inherits")) {
+				section.AlreadyInherited = true;
+				return;
+			}
+
+			foreach (var parentName in section.ReadString("$Inherits").Split(',')) {
+				var parent = GetSection(parentName);
+				if (parent == null) {
+					logger.Warn("Section {0} has missing parent {1}!", section.Name, parentName);
+					continue;
+				}
+
+				Inherit(parent);
+				foreach (var pair in parent.OrderedEntries) {
+					if (section.HasKey(pair.Key))
+						continue;
+					section.SetValue(pair.Key, pair.Value);
+				}
+			}
+			section.AlreadyInherited = true;
+		}
+
 		public void LoadAresIncludes(VirtualFileSystem.VirtualFileSystem vfs) {
 			// support for Ares tag
 			var includes = GetOrCreateSection("#include");
@@ -67,7 +99,7 @@ namespace CNCMaps.FileFormats {
 		}
 
 		public void LoadPhobosIncludes(VirtualFileSystem.VirtualFileSystem vfs) {
-			// support for Ares tag
+			// support for Phobos tag
 			var includes = GetOrCreateSection("$Include");
 			foreach (var entry in includes.OrderedEntries) {
 				var include = vfs.Open<IniFile>(entry.Value);
@@ -125,6 +157,7 @@ namespace CNCMaps.FileFormats {
 		public class IniSection {
 			public int Index { get; set; }
 			public string Name { get; set; }
+			public bool AlreadyInherited { get; set; }
 
 			public class IniValue {
 				private string value;
